@@ -1,16 +1,84 @@
 {
-  "name": "react-example",
-  "private": true,
-  "version": "0.0.0",
+  "name": "vessertid",
+  "version": "2026.1.0",
+  "description": "JavaScript Social Media Engine & Unified Creative Asset Architecture",
   "type": "module",
+  "main": "./build/vessertid.cjs",
+  "module": "./build/vessertid.module.js",
+  "exports": {
+    ".": {
+      "import": "./build/vessertid.module.js",
+      "require": "./build/vessertid.cjs"
+    },
+    "./assets/*": "./assets/*",
+    "./fonts/*": "./assets/fonts/*",
+    "./icons/*": "./assets/icons/*",
+    "./sounds/*": "./assets/sounds/*",
+    "./videos/*": "./assets/videos/*",
+    "./backgrounds/*": "./assets/backgrounds/*",
+    "./overlays/*": "./assets/overlays/*",
+    "./photos/*": "./assets/photos/*",
+    "./mockups/*": "./assets/mockups/*",
+    "./templates/*": "./assets/templates/*",
+    "./filters/*": "./assets/filters/*",
+    "./motion/*": "./assets/motion/*",
+    "./3d/*": "./assets/3d/*",
+    "./brand/*": "./assets/brand/*",
+    "./colors/*": "./assets/colors/*",
+    "./documents/*": "./assets/documents/*",
+    "./ai/*": "./assets/ai/*",
+    "./src/*": "./src/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prssbayu-oss/Vessertt"
+  },
+  "files": [
+    "build",
+    "assets",
+    "src",
+    "server.js",
+    "index.html",
+    "README.md",
+    "package.json"
+  ],
+  "directories": {
+    "doc": "assets/documents",
+    "assets": "assets"
+  },
+  "browserslist": [
+    "> 1%, not dead, not ie 11, not op_mini all"
+  ],
   "scripts": {
-    "dev": "node server.js -p 3000",
     "start": "node server.js -p 3000",
-    "build": "echo 'Static build complete'",
+    "dev": "node server.js -p 3000",
+    "build": "node utils/build.js",
     "preview": "node server.js -p 3000",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf build",
     "lint": "echo 'No lint errors'"
   },
+  "keywords": [
+    "vessertid",
+    "social-media",
+    "social-media-engine",
+    "creative-assets",
+    "content-creation",
+    "three-for-social",
+    "reels",
+    "tiktok",
+    "youtube-shorts",
+    "typography",
+    "templates",
+    "audio-retention",
+    "javascript",
+    "html5"
+  ],
+  "author": "prssbayu-oss",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/prssbayu-oss/Vessertt/issues"
+  },
+  "homepage": "https://github.com/prssbayu-oss/Vessertt",
   "dependencies": {
     "@google/genai": "^2.4.0",
     "@tailwindcss/vite": "^4.3.3",
