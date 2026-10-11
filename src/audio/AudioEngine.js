@@ -1,6 +1,5 @@
 /**
  * AudioEngine manages retention sounds, backsound tracks, and SFX chimes.
- * Analogous to Three.js AudioListener and Audio.
  */
 class AudioEngine {
 

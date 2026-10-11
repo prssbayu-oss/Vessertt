@@ -1,6 +1,5 @@
 /**
  * AssetLoader fetches JSON metadata, color palettes, and manifests.
- * Analogous to Three.js FileLoader.
  */
 class AssetLoader {
 

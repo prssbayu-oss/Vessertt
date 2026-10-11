@@ -3,7 +3,6 @@ import { LayerTypes } from '../constants.js';
 
 /**
  * MediaLayer handles raster and vector graphic assets.
- * Analogous to Three.js Mesh with Texture.
  */
 class MediaLayer extends Layer {
 
@@ -14,7 +13,7 @@ class MediaLayer extends Layer {
 		this.src = src;
 		this.image = null;
 		this.isLoaded = false;
-		this.fit = options.fit || 'cover'; // 'cover', 'contain', 'stretch'
+		this.fit = options.fit || 'cover';
 
 	}
 

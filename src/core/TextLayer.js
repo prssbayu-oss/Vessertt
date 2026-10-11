@@ -3,7 +3,6 @@ import { LayerTypes } from '../constants.js';
 
 /**
  * TextLayer represents typography elements, hooks, and subtitles.
- * Analogous to Three.js TextGeometry / SpriteText.
  */
 class TextLayer extends Layer {
 

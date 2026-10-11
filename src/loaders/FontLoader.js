@@ -1,6 +1,5 @@
 /**
  * FontLoader dynamically injects and loads font faces into the document.
- * Analogous to Three.js FontLoader.
  */
 class FontLoader {
 

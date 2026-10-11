@@ -2,7 +2,6 @@ import { AspectRatios } from '../constants.js';
 
 /**
  * SocialCanvas acts as the primary composition viewport and renderer.
- * Analogous to Three.js Scene and WebGLRenderer.
  */
 class SocialCanvas {
 

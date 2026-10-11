@@ -2,7 +2,6 @@ import { LayerTypes } from '../constants.js';
 
 /**
  * Base Layer class representing an element on the Social Canvas.
- * Analogous to Three.js Object3D.
  */
 class Layer {
 

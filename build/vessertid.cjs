@@ -2,7 +2,7 @@
  * VessertID — The Social Media Engine & Creative Asset Architecture
  * Version: 2026.1.0
  * (c) 2026 VessertID Creative Studio
- * Architecture inspired by Three.js by Mr. Doob
+ * All rights reserved.
  */
 
 const REVISION = '2026.1';
@@ -60,7 +60,6 @@ const LayerTypes = {
 
 /**
  * Base Layer class representing an element on the Social Canvas.
- * Analogous to Three.js Object3D.
  */
 class Layer {
 
@@ -123,7 +122,6 @@ class Layer {
 
 /**
  * MediaLayer handles raster and vector graphic assets.
- * Analogous to Three.js Mesh with Texture.
  */
 class MediaLayer extends Layer {
 
@@ -134,7 +132,7 @@ class MediaLayer extends Layer {
 		this.src = src;
 		this.image = null;
 		this.isLoaded = false;
-		this.fit = options.fit || 'cover'; // 'cover', 'contain', 'stretch'
+		this.fit = options.fit || 'cover';
 
 	}
 
@@ -173,7 +171,6 @@ class MediaLayer extends Layer {
 
 /**
  * TextLayer represents typography elements, hooks, and subtitles.
- * Analogous to Three.js TextGeometry / SpriteText.
  */
 class TextLayer extends Layer {
 
@@ -223,7 +220,6 @@ class TextLayer extends Layer {
 
 /**
  * SocialCanvas acts as the primary composition viewport and renderer.
- * Analogous to Three.js Scene and WebGLRenderer.
  */
 class SocialCanvas {
 
@@ -367,7 +363,6 @@ class SocialCanvas {
 
 /**
  * FontLoader dynamically injects and loads font faces into the document.
- * Analogous to Three.js FontLoader.
  */
 class FontLoader {
 
@@ -419,7 +414,6 @@ class FontLoader {
 
 /**
  * AssetLoader fetches JSON metadata, color palettes, and manifests.
- * Analogous to Three.js FileLoader.
  */
 class AssetLoader {
 
@@ -463,7 +457,6 @@ class AssetLoader {
 
 /**
  * AudioEngine manages retention sounds, backsound tracks, and SFX chimes.
- * Analogous to Three.js AudioListener and Audio.
  */
 class AudioEngine {
 

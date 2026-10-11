@@ -1,7 +1,7 @@
 /**
  * VessertID — The Social Media Engine & Creative Asset Architecture
  * Author: Bayu Prasetyo (prssbayu-oss)
- * Inspired by Three.js architecture by Ricardo Cabello (Mr. Doob)
+ * Copyright (c) 2026 VessertID Creative Studio
  */
 
 export * from './constants.js';

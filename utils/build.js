@@ -8,7 +8,7 @@ const bundleHeader = `/**
  * VessertID — The Social Media Engine & Creative Asset Architecture
  * Version: 2026.1.0
  * (c) 2026 VessertID Creative Studio
- * Architecture inspired by Three.js by Mr. Doob
+ * All rights reserved.
  */
 `;
 
@@ -28,7 +28,6 @@ let moduleCode = bundleHeader + '\n';
 for ( const file of filesToBundle ) {
 
 	let content = fs.readFileSync( file, 'utf8' );
-	// Remove internal relative imports and exports from individual modules
 	content = content.replace( /import\s+.*?from\s+['"].*?['"];?\n?/g, '' );
 	content = content.replace( /export\s*\{[^}]*\};?\n?/g, '' );
 	moduleCode += content + '\n';
