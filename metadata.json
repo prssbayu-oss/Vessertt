@@ -1,0 +1,6 @@
+{
+  "name": "VessertID Brand Asset Hub",
+  "description": "Comprehensive creative media library, design kit, and brand asset directory for VessertID.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

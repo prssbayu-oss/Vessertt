@@ -1,0 +1,148 @@
+{
+  "systemName": "VessertID Unified Asset Hub",
+  "version": "2026.1.0",
+  "lastUpdated": "2026-10-11T07:17:25Z",
+  "maintainer": "VessertID Creative Studio Architecture",
+  "license": "VessertID Commercial Brand License 2026",
+  "totalDirectories": 18,
+  "directories": {
+    "fonts": {
+      "description": "Complete typographic font family collection",
+      "format": [
+        ".ttf"
+      ]
+    },
+    "icons": {
+      "description": "Universal UI & social icon vectors",
+      "format": [
+        ".svg"
+      ]
+    },
+    "colors": {
+      "description": "Adobe Swatch Exchange palettes and JSON tokens",
+      "format": [
+        ".ase",
+        ".json"
+      ]
+    },
+    "sounds": {
+      "description": "Royalty-free audio library, SFX, ambient, voice-overs",
+      "format": [
+        ".mp3"
+      ]
+    },
+    "videos": {
+      "description": "Production video footage, transitions, and motion clips",
+      "format": [
+        ".mp4"
+      ]
+    },
+    "backgrounds": {
+      "description": "Studio textures, solids, gradients, patterns",
+      "format": [
+        ".jpg"
+      ]
+    },
+    "overlays": {
+      "description": "High-resolution transparent overlay effects",
+      "format": [
+        ".png"
+      ]
+    },
+    "photos": {
+      "description": "Commercial photographic library",
+      "format": [
+        ".jpg"
+      ]
+    },
+    "illustrations": {
+      "description": "Vector and raster custom artwork",
+      "format": [
+        ".svg",
+        ".png",
+        ".ai"
+      ]
+    },
+    "stickers": {
+      "description": "Interactive stickers, chat stickers, animated gifs",
+      "format": [
+        ".png",
+        ".gif",
+        ".webp"
+      ]
+    },
+    "mockups": {
+      "description": "Device and product presentation mockups",
+      "format": [
+        ".png"
+      ]
+    },
+    "templates": {
+      "description": "Multi-format master production templates",
+      "format": [
+        ".psd",
+        ".pptx",
+        ".html"
+      ]
+    },
+    "filters": {
+      "description": "Professional 3D LUTs and DCC application presets",
+      "format": [
+        ".cube",
+        ".xmp",
+        ".atn",
+        ".prfpset",
+        ".ffx",
+        ".drx"
+      ]
+    },
+    "motion": {
+      "description": "Lottie animations, webm transitions, and Rive files",
+      "format": [
+        ".json",
+        ".gif",
+        ".webm",
+        ".riv",
+        ".aep"
+      ]
+    },
+    "3d": {
+      "description": "3D models, textures, printable meshes, HDRI environments",
+      "format": [
+        ".glb",
+        ".gltf",
+        ".fbx",
+        ".obj",
+        ".stl",
+        ".usdz",
+        ".ktx2",
+        ".hdr"
+      ]
+    },
+    "ai": {
+      "description": "AI prompt engineering benchmarks and generated media",
+      "format": [
+        ".png",
+        ".mp4",
+        ".mp3",
+        ".md"
+      ]
+    },
+    "brand": {
+      "description": "Official brand identity lockups, animated logos, mascots",
+      "format": [
+        ".svg",
+        ".png",
+        ".mp4",
+        ".gif"
+      ]
+    },
+    "documents": {
+      "description": "Brand guidelines, operational SOPs, checklists, and manuals",
+      "format": [
+        ".pdf",
+        ".md"
+      ]
+    }
+  }
+}

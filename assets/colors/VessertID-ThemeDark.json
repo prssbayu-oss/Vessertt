@@ -1,0 +1,28 @@
+{
+  "name": "VessertID Dark Theme",
+  "version": "2026.1.0",
+  "type": "dark",
+  "colors": {
+    "primary": "#6366F1",
+    "primaryForeground": "#FFFFFF",
+    "secondary": "#8B5CF6",
+    "secondaryForeground": "#FFFFFF",
+    "accent": "#FBBF24",
+    "accentForeground": "#0F172A",
+    "background": "#090D16",
+    "surface": "#111827",
+    "surfaceHover": "#1F2937",
+    "text": "#F8FAFC",
+    "textMuted": "#94A3B8",
+    "border": "#1E293B",
+    "success": "#34D399",
+    "warning": "#FBBF24",
+    "error": "#F87171",
+    "info": "#38BDF8"
+  },
+  "shadows": {
+    "sm": "0 1px 2px 0 rgb(0 0 0 / 0.5)",
+    "md": "0 4px 6px -1px rgb(0 0 0 / 0.4)",
+    "lg": "0 10px 15px -3px rgb(0 0 0 / 0.3)"
+  }
+}

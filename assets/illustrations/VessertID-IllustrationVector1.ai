@@ -1,0 +1,17 @@
+%!PS-Adobe-3.0
+%%Creator: Adobe Illustrator(R) 28.0 (VessertID Studio)
+%%AI8_CreatorVersion: 28.0
+%%Pages: 1
+%%BoundingBox: 0 0 800 600
+%%EndComments
+%%BeginProlog
+%%EndProlog
+%%Page: 1 1
+0.31 0.27 0.90 setrgbcolor
+50 50 700 500 rectfill
+1.0 1.0 1.0 setrgbcolor
+/Helvetica-Bold findfont 36 scalefont setfont
+100 300 moveto
+(VessertID Vector Asset 2026) show
+showpage
+%%EOF

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DaVinciColorGrade Version="19.0">
+    <GradeInfo>
+        <Name>VessertID Studio Hero Grade 2026</Name>
+        <ColorSpace>DaVinci Wide Gamut / Intermediate</ColorSpace>
+        <Gamma>DaVinci Intermediate</Gamma>
+        <Saturation>52.0</Saturation>
+        <Contrast>1.08</Contrast>
+        <Pivot>0.435</Pivot>
+    </GradeInfo>
+</DaVinciColorGrade>

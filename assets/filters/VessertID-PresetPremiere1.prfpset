@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PremiereData Version="3">
+    <Tree ObjectRef="1"/>
+    <TreeFolder ObjectID="1" ClassID="5ee64264-77e8-4228-b94f-cc810d70eb06" Version="1">
+        <Node Version="1">
+            <Properties Version="1">
+                <Items Version="1">
+                    <Item Key="TreeFolder.Name">VessertID Cinematic Grade 2026</Item>
+                </Items>
+            </Properties>
+        </Node>
+    </TreeFolder>
+</PremiereData>
