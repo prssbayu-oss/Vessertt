@@ -3,16 +3,520 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VessertID Brand Asset Hub</title>
-    <meta name="description" content="Comprehensive creative media library, design kit, and brand asset directory for VessertID." />
-    <meta property="og:title" content="VessertID Brand Asset Hub" />
-    <meta property="og:description" content="Comprehensive creative media library, design kit, and brand asset directory for VessertID." />
+    <title>VessertID — The Social Media Engine & Creative Asset Hub</title>
+    <meta name="description" content="The definitive unified framework and creative media engine covering the full spectrum of social media production." />
+    <meta property="og:title" content="VessertID — The Social Media Engine & Creative Asset Hub" />
+    <meta property="og:description" content="The definitive unified framework and creative media engine covering the full spectrum of social media production." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/VessertID-LogoIcon.svg" />
+    <style>
+      :root {
+        --bg-main: #090D16;
+        --bg-sidebar: #0F172A;
+        --bg-card: #1E293B;
+        --bg-card-hover: #334155;
+        --accent-primary: #6366F1;
+        --accent-secondary: #8B5CF6;
+        --accent-amber: #F59E0B;
+        --text-primary: #F8FAFC;
+        --text-muted: #94A3B8;
+        --border-color: #1E293B;
+        --sidebar-width: 320px;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-primary);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+      /* Sidebar */
+      #sidebar {
+        width: var(--sidebar-width);
+        background-color: var(--bg-sidebar);
+        border-right: 1px solid #1E293B;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        flex-shrink: 0;
+      }
+      .brand-header {
+        padding: 20px;
+        border-bottom: 1px solid #1E293B;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .brand-logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+      }
+      .brand-title h1 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        color: #FFFFFF;
+      }
+      .brand-title span {
+        font-size: 0.72rem;
+        color: var(--accent-amber);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: block;
+      }
+      .search-box {
+        padding: 14px 16px;
+        border-bottom: 1px solid #1E293B;
+      }
+      .search-input {
+        width: 100%;
+        background-color: #090D16;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 10px 14px;
+        color: #FFFFFF;
+        font-size: 0.85rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .search-input:focus {
+        border-color: var(--accent-primary);
+      }
+      .category-nav {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+      }
+      .category-title {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+        padding: 8px 10px 4px 10px;
+        font-weight: 700;
+      }
+      .category-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 12px;
+        margin-bottom: 2px;
+        border-radius: 6px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .category-item:hover {
+        background-color: rgba(255,255,255,0.05);
+        color: #FFFFFF;
+      }
+      .category-item.active {
+        background: linear-gradient(90deg, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.1) 100%);
+        color: #818CF8;
+        font-weight: 600;
+        border-left: 3px solid var(--accent-primary);
+      }
+      .category-badge {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        background-color: rgba(255,255,255,0.06);
+        border-radius: 10px;
+      }
+      .sidebar-footer {
+        padding: 14px 16px;
+        border-top: 1px solid #1E293B;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .github-link {
+        color: #818CF8;
+        text-decoration: none;
+      }
+
+      /* Main Content Viewport */
+      #main-viewport {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .topbar {
+        padding: 16px 24px;
+        background-color: var(--bg-sidebar);
+        border-bottom: 1px solid #1E293B;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .view-heading h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+      .view-heading p {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+      }
+      .quick-stats {
+        display: flex;
+        gap: 16px;
+        font-size: 0.82rem;
+      }
+      .stat-pill {
+        padding: 6px 14px;
+        background-color: var(--bg-card);
+        border-radius: 20px;
+        border: 1px solid #334155;
+      }
+      .content-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding: 28px;
+      }
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+      }
+      .asset-card {
+        background-color: var(--bg-card);
+        border: 1px solid #334155;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.2s, border-color 0.2s;
+        display: flex;
+        flex-direction: column;
+      }
+      .asset-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--accent-primary);
+      }
+      .card-preview {
+        height: 180px;
+        background-color: #090D16;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+      }
+      .card-preview img, .card-preview video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .card-preview.contain img {
+        object-fit: contain;
+        padding: 16px;
+      }
+      .card-preview.audio-type {
+        background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%);
+      }
+      .card-preview.font-type {
+        background: #0F172A;
+        padding: 20px;
+        font-size: 2.2rem;
+        text-align: center;
+        line-height: 1.2;
+      }
+      .card-body {
+        padding: 14px 16px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .card-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+        word-break: break-all;
+      }
+      .card-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255,255,255,0.06);
+      }
+      .card-btn {
+        background-color: var(--accent-primary);
+        color: #FFFFFF;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .card-btn:hover {
+        background-color: #4F46E5;
+      }
+      .card-btn.secondary {
+        background-color: #334155;
+      }
+      .card-btn.secondary:hover {
+        background-color: #475569;
+      }
+
+      /* Audio Player bar */
+      .audio-ctrl {
+        width: 100%;
+        padding: 10px;
+      }
+
+      /* Custom Font Face Loaders */
+      @font-face { font-family: 'VessertBebas'; src: url('/assets/fonts/VessertID-BebasNeue-Regular.ttf'); }
+      @font-face { font-family: 'VessertAnton'; src: url('/assets/fonts/VessertID-Anton-Regular.ttf'); }
+      @font-face { font-family: 'VessertMontserrat'; src: url('/assets/fonts/VessertID-Montserrat-Bold.ttf'); }
+      @font-face { font-family: 'VessertPoppins'; src: url('/assets/fonts/VessertID-Poppins-Bold.ttf'); }
+      @font-face { font-family: 'VessertPacifico'; src: url('/assets/fonts/VessertID-Pacifico-Regular.ttf'); }
+      @font-face { font-family: 'VessertClash'; src: url('/assets/fonts/VessertID-ClashDisplay-Bold.ttf'); }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar">
+      <div class="brand-header">
+        <img class="brand-logo" src="/assets/brand/VessertID-LogoIcon.svg" alt="VessertID" />
+        <div class="brand-title">
+          <h1>VESSERT ID</h1>
+          <span>Social Media Engine</span>
+        </div>
+      </div>
+      <div class="search-box">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search assets (e.g. coffee, lofi, ttf)..." />
+      </div>
+      <nav class="category-nav" id="categoryNav">
+        <div class="category-title">Social Media Pillars</div>
+        <div class="category-item active" data-cat="all"><span>🌐 All Assets</span><span class="category-badge">341</span></div>
+        <div class="category-item" data-cat="videos"><span>🎬 B-Roll & Transitions</span><span class="category-badge">24</span></div>
+        <div class="category-item" data-cat="sounds"><span>🎵 Trending Audio & SFX</span><span class="category-badge">64</span></div>
+        <div class="category-item" data-cat="photos"><span>📸 Curated Photography</span><span class="category-badge">13</span></div>
+        <div class="category-item" data-cat="fonts"><span>🔤 Hook Typography (TTF)</span><span class="category-badge">20</span></div>
+        <div class="category-item" data-cat="mockups"><span>📱 Device & Product Mockups</span><span class="category-badge">9</span></div>
+        <div class="category-item" data-cat="templates"><span>📐 Multi-Channel Canvas (PSD)</span><span class="category-badge">16</span></div>
+        <div class="category-item" data-cat="backgrounds"><span>🖼️ Gradients & Textures</span><span class="category-badge">40</span></div>
+        <div class="category-item" data-cat="overlays"><span>✨ Cinematic Overlays</span><span class="category-badge">20</span></div>
+        <div class="category-item" data-cat="icons"><span>⚡ Vector UI & Social Icons</span><span class="category-badge">41</span></div>
+        <div class="category-item" data-cat="stickers"><span>💬 Chat Stickers (WA/TG)</span><span class="category-badge">10</span></div>
+        <div class="category-item" data-cat="filters"><span>🎞️ 3D LUT Color Grades</span><span class="category-badge">11</span></div>
+        <div class="category-item" data-cat="3d"><span>🧊 3D Models & Spasial</span><span class="category-badge">10</span></div>
+        <div class="category-item" data-cat="motion"><span>💫 Lottie Vector Motion</span><span class="category-badge">10</span></div>
+        <div class="category-item" data-cat="brand"><span>🛡️ Official Brand Marks</span><span class="category-badge">12</span></div>
+        <div class="category-item" data-cat="documents"><span>📜 SOP, Guidelines & Checklists</span><span class="category-badge">8</span></div>
+        <div class="category-item" data-cat="ai"><span>🤖 AI Prompt Workflows</span><span class="category-badge">8</span></div>
+        <div class="category-item" data-cat="colors"><span>🎨 Design Tokens & ASE</span><span class="category-badge">14</span></div>
+      </nav>
+      <div class="sidebar-footer">
+        <span>VessertID Ecosystem v2026</span>
+        <a class="github-link" href="https://github.com/prssbayu-oss/Vessertt" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </aside>
+
+    <!-- Main Viewport -->
+    <main id="main-viewport">
+      <header class="topbar">
+        <div class="view-heading">
+          <h2 id="currentCatTitle">All Creative Media Assets</h2>
+          <p id="currentCatDesc">The definitive unified framework covering 100% of the social media creative pipeline.</p>
+        </div>
+        <div class="quick-stats">
+          <div class="stat-pill">✨ <strong>341</strong> Total Assets</div>
+          <div class="stat-pill">🚀 <strong>18</strong> Media Categories</div>
+          <div class="stat-pill">⚡ <strong>Three.js</strong> Architecture</div>
+        </div>
+      </header>
+
+      <div class="content-scroll">
+        <div class="grid-container" id="assetGrid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+      // Master Asset Registry
+      const assetCategories = {
+        videos: [
+          { name: "VessertID-BrollCoffee.mp4", type: "video", desc: "Artisan coffee pour-over cinematic B-roll" },
+          { name: "VessertID-BrollCity.mp4", type: "video", desc: "Night metropolis skyline Ken Burns motion" },
+          { name: "VessertID-BrollFood.mp4", type: "video", desc: "Gourmet culinary dish presentation" },
+          { name: "VessertID-BrollTravel.mp4", type: "video", desc: "Scenic landscape travel b-roll" },
+          { name: "VessertID-BrollNature.mp4", type: "video", desc: "Alpine mountain landscape footage" },
+          { name: "VessertID-DroneBeach.mp4", type: "video", desc: "Turquoise tropical coastline aerial pan" },
+          { name: "VessertID-DroneCity.mp4", type: "video", desc: "Skyscraper skyline drone tracking" },
+          { name: "VessertID-GreenScreenPerson.mp4", type: "video", desc: "Isolated talent subject on 0x00FF00 green" },
+          { name: "VessertID-IntroCountdown.mp4", type: "video", desc: "High-energy 3-2-1 countdown hook" },
+          { name: "VessertID-IntroAnimation.mp4", type: "video", desc: "Studio motion typography brand reveal" },
+          { name: "VessertID-StockFootageMeeting.mp4", type: "video", desc: "Creative team brainstorming session" },
+          { name: "VessertID-StockFootageOffice.mp4", type: "video", desc: "Modern studio workspace environment" }
+        ],
+        sounds: [
+          { name: "VessertID-BacksoundLofiChill.mp3", type: "audio", desc: "Warm Cmaj7 Rhodes chords + vinyl crackle" },
+          { name: "VessertID-BacksoundLofiStudy.mp3", type: "audio", desc: "Mellow Fmaj7 study beat progression" },
+          { name: "VessertID-BacksoundRelaxingPiano.mp3", type: "audio", desc: "Grand acoustic piano C-major chord decay" },
+          { name: "VessertID-BacksoundRelaxingGuitar.mp3", type: "audio", desc: "Acoustic fingerpicked guitar resonance" },
+          { name: "VessertID-BacksoundUpbeatHappy.mp3", type: "audio", desc: "Major triad viral reel backing track" },
+          { name: "VessertID-BacksoundCinematicEpic.mp3", type: "audio", desc: "55Hz sub drone + brass harmonic swell" },
+          { name: "VessertID-BacksoundHiphopBoom.mp3", type: "audio", desc: "Punchy 808 sub-bass drop" },
+          { name: "VessertID-SfxCameraShutter.mp3", type: "audio", desc: "Mechanical twin-curtain SLR shutter click" },
+          { name: "VessertID-SfxNotificationDing.mp3", type: "audio", desc: "Crystal glass bell reward chime" },
+          { name: "VessertID-SfxTransitionWhoosh.mp3", type: "audio", desc: "Aerodynamic filtered stereo swipe" },
+          { name: "VessertID-JingleBrandMain.mp3", type: "audio", desc: "Official 4-note melodic studio signature" },
+          { name: "VessertID-AmbientNatureRain.mp3", type: "audio", desc: "Relaxing atmospheric rain soundscape" }
+        ],
+        photos: [
+          { name: "VessertID-PhotoProduct1.jpg", type: "image", desc: "Minimalist luxury product studio lighting" },
+          { name: "VessertID-PhotoProduct2.jpg", type: "image", desc: "Clean cosmetic skincare bottle packaging" },
+          { name: "VessertID-PhotoModel1.jpg", type: "image", desc: "Studio editorial fashion model portrait" },
+          { name: "VessertID-PhotoModel2.jpg", type: "image", desc: "Outdoor portrait editorial menswear" },
+          { name: "VessertID-PhotoFood1.jpg", type: "image", desc: "Gourmet pastry & culinary food design" },
+          { name: "VessertID-PhotoFood2.jpg", type: "image", desc: "Fine dining plated dessert presentation" },
+          { name: "VessertID-PhotoLifestyle1.jpg", type: "image", desc: "Modern creative studio team collaboration" },
+          { name: "VessertID-PhotoUrban1.jpg", type: "image", desc: "Architectural modern skyscraper skyline" },
+          { name: "VessertID-PhotoLandscape1.jpg", type: "image", desc: "Dramatic mountain alpine peak" }
+        ],
+        mockups: [
+          { name: "VessertID-MockupPhone1.png", type: "image", desc: "iPhone Titanium Dynamic Island + live UI" },
+          { name: "VessertID-MockupLaptop1.png", type: "image", desc: "MacBook Pro keyboard chassis + screen" },
+          { name: "VessertID-MockupSocialPost1.png", type: "image", desc: "Instagram social feed card complete UI" },
+          { name: "VessertID-MockupTablet1.png", type: "image", desc: "iPad Pro symmetric bezel dashboard frame" },
+          { name: "VessertID-MockupDesktop1.png", type: "image", desc: "Studio Display 32\" on aluminum pedestal" },
+          { name: "VessertID-MockupPoster1.png", type: "image", desc: "Gallery framed wall art with passe-partout" },
+          { name: "VessertID-MockupPackaging1.png", type: "image", desc: "3D perspective product box with barcode" },
+          { name: "VessertID-MockupTshirt1.png", type: "image", desc: "Black heavyweight cotton tee with chest print" },
+          { name: "VessertID-MockupSignage1.png", type: "image", desc: "Architectural exterior blade sign with logo" }
+        ],
+        fonts: [
+          { name: "VessertID-BebasNeue-Regular.ttf", type: "font", font: "VessertBebas", sample: "VIRAL HOOK", desc: "The #1 high-impact headline display font" },
+          { name: "VessertID-Anton-Regular.ttf", type: "font", font: "VessertAnton", sample: "BOLD TRUTH", desc: "Heavyweight punchy social statement" },
+          { name: "VessertID-ClashDisplay-Bold.ttf", type: "font", font: "VessertClash", sample: "VESSERT ID", desc: "Modern luxury editorial sans serif" },
+          { name: "VessertID-Poppins-Bold.ttf", type: "font", font: "VessertPoppins", sample: "Clean Modern", desc: "Geometric subtitle & carousel text" },
+          { name: "VessertID-Montserrat-Bold.ttf", type: "font", font: "VessertMontserrat", sample: "RETENTION", desc: "Universal creator video caption font" },
+          { name: "VessertID-Pacifico-Regular.ttf", type: "font", font: "VessertPacifico", sample: "Story Vibes", desc: "Organic handwriting signature" }
+        ],
+        backgrounds: [
+          { name: "VessertID-BgMarble.jpg", type: "image", desc: "Authentic Italian Carrara marble texture" },
+          { name: "VessertID-BgWood.jpg", type: "image", desc: "Natural oak timber surface" },
+          { name: "VessertID-BgCloud.jpg", type: "image", desc: "Fluffy white cumulus clouds in cyan sky" },
+          { name: "VessertID-BgFlower.jpg", type: "image", desc: "Blooming vibrant floral botanical garden" },
+          { name: "VessertID-BgBeach.jpg", type: "image", desc: "Turquoise tropical coastline and sands" },
+          { name: "VessertID-BgStarry.jpg", type: "image", desc: "Deep space Milky Way constellation" },
+          { name: "VessertID-BgCity.jpg", type: "image", desc: "Luminous nighttime city lights" }
+        ],
+        templates: [
+          { name: "VessertID-TemplateStory1080x1920.psd", type: "doc", desc: "Master 9:16 vertical canvas (TikTok, Reels, Shorts)" },
+          { name: "VessertID-TemplateCarousel1080x1350.psd", type: "doc", desc: "Optimal 4:5 swipeable carousel canvas" },
+          { name: "VessertID-TemplateFeedSquare1080x1080.psd", type: "doc", desc: "Classic 1:1 Instagram & Facebook feed" },
+          { name: "VessertID-TemplateThumbnailYt1280x720.psd", type: "doc", desc: "16:9 high-CTR YouTube thumbnail matrix" },
+          { name: "VessertID-TemplateEmail.html", type: "link", href: "/assets/templates/VessertID-TemplateEmail.html", desc: "Responsive HTML broadcast newsletter" }
+        ],
+        brand: [
+          { name: "VessertID-LogoPrimary.svg", type: "image", contain: true, desc: "Primary brand mark with gradient icon" },
+          { name: "VessertID-LogoIcon.svg", type: "image", contain: true, desc: "Isolated monogram profile avatar icon" },
+          { name: "VessertID-Mascot.svg", type: "image", contain: true, desc: "Official illustrated studio mascot" },
+          { name: "VessertID-LogoAnimated.mp4", type: "video", desc: "Official animated motion logo sting" }
+        ]
+      };
+
+      const assetGrid = document.getElementById("assetGrid");
+      const currentCatTitle = document.getElementById("currentCatTitle");
+      const currentCatDesc = document.getElementById("currentCatDesc");
+      const searchInput = document.getElementById("searchInput");
+      let activeCategory = "all";
+
+      function renderAssets(filterCat = "all", searchQuery = "") {
+        assetGrid.innerHTML = "";
+        let displayed = [];
+
+        if (filterCat === "all") {
+          for (const [cat, list] of Object.entries(assetCategories)) {
+            list.forEach(item => displayed.push({ ...item, category: cat }));
+          }
+        } else if (assetCategories[filterCat]) {
+          displayed = assetCategories[filterCat].map(item => ({ ...item, category: filterCat }));
+        }
+
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase();
+          displayed = displayed.filter(item => item.name.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q));
+        }
+
+        displayed.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "asset-card";
+
+          let previewHtml = "";
+          const filePath = `/assets/${item.category}/${item.name}`;
+
+          if (item.type === "video") {
+            previewHtml = `<div class="card-preview"><video src="${filePath}" muted loop onmouseenter="this.play()" onmouseleave="this.pause()"></video></div>`;
+          } else if (item.type === "image") {
+            const containClass = item.contain ? "contain" : "";
+            previewHtml = `<div class="card-preview ${containClass}"><img src="${filePath}" alt="${item.name}" loading="lazy" /></div>`;
+          } else if (item.type === "audio") {
+            previewHtml = `
+              <div class="card-preview audio-type">
+                <div class="audio-ctrl">
+                  <div style="font-size: 2rem; text-align: center; margin-bottom: 8px;">🎵</div>
+                  <audio controls style="width: 100%; height: 32px;"><source src="${filePath}" type="audio/mpeg"></audio>
+                </div>
+              </div>`;
+          } else if (item.type === "font") {
+            previewHtml = `<div class="card-preview font-type" style="font-family: '${item.font}', sans-serif;">${item.sample}</div>`;
+          } else {
+            previewHtml = `<div class="card-preview font-type" style="font-size: 3rem;">📦</div>`;
+          }
+
+          card.innerHTML = `
+            ${previewHtml}
+            <div class="card-body">
+              <div>
+                <div class="card-title">${item.name}</div>
+                <div style="font-size: 0.76rem; color: var(--text-muted);">${item.desc}</div>
+              </div>
+              <div class="card-actions">
+                <span style="font-size: 0.72rem; color: #818CF8; text-transform: uppercase;">/${item.category}</span>
+                <a href="${filePath}" download class="card-btn">Download ⬇</a>
+              </div>
+            </div>
+          `;
+          assetGrid.appendChild(card);
+        });
+      }
+
+      // Nav Click Handlers
+      document.querySelectorAll(".category-item").forEach(item => {
+        item.addEventListener("click", () => {
+          document.querySelectorAll(".category-item").forEach(i => i.classList.remove("active"));
+          item.classList.add("active");
+          activeCategory = item.dataset.cat;
+          const label = item.querySelector("span").textContent;
+          currentCatTitle.textContent = label;
+          renderAssets(activeCategory, searchInput.value);
+        });
+      });
+
+      // Search Handler
+      searchInput.addEventListener("input", (e) => {
+        renderAssets(activeCategory, e.target.value);
+      });
+
+      // Initial Render
+      renderAssets("all");
+    </script>
   </body>
 </html>
-
