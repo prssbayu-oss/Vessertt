@@ -1,78 +1,64 @@
+import { LayerTypes } from '../constants.js';
+
 /**
- * VessertID Layer System
- * Analogous to Three.js Object3D / Mesh hierarchy
+ * Base Layer class representing an element on the Social Canvas.
+ * Analogous to Three.js Object3D.
  */
+class Layer {
 
-import { LayerTypes } from '../constants/SocialPresets.js';
+	constructor( options = {} ) {
 
-export class Layer {
-  constructor(options = {}) {
-    this.id = options.id || 'layer_' + Math.random().toString(36).substr(2, 9);
-    this.name = options.name || 'Unnamed Layer';
-    this.type = options.type || LayerTypes.MEDIA;
-    this.visible = options.visible !== false;
-    this.opacity = options.opacity !== undefined ? options.opacity : 1.0;
-    this.zIndex = options.zIndex || 0;
-    this.blendMode = options.blendMode || 'source-over';
-    this.transform = {
-      x: options.x || 0,
-      y: options.y || 0,
-      scaleX: options.scaleX || 1,
-      scaleY: options.scaleY || 1,
-      rotation: options.rotation || 0
-    };
-  }
+		this.id = options.id || 'layer_' + Math.random().toString( 36 ).substr( 2, 9 );
+		this.name = options.name || 'Unnamed Layer';
+		this.type = options.type || LayerTypes.MEDIA;
+		this.visible = options.visible !== false;
+		this.opacity = options.opacity !== undefined ? options.opacity : 1.0;
+		this.zIndex = options.zIndex || 0;
+		this.blendMode = options.blendMode || 'source-over';
 
-  setOpacity(val) {
-    this.opacity = Math.max(0, Math.min(1, val));
-    return this;
-  }
+		this.position = { x: options.x || 0, y: options.y || 0 };
+		this.scale = { x: options.scaleX || 1, y: options.scaleY || 1 };
+		this.rotation = options.rotation || 0;
 
-  setPosition(x, y) {
-    this.transform.x = x;
-    this.transform.y = y;
-    return this;
-  }
+	}
 
-  setScale(s) {
-    this.transform.scaleX = s;
-    this.transform.scaleY = s;
-    return this;
-  }
+	setOpacity( opacity ) {
+
+		this.opacity = Math.max( 0, Math.min( 1, opacity ) );
+		return this;
+
+	}
+
+	setPosition( x, y ) {
+
+		this.position.x = x;
+		this.position.y = y;
+		return this;
+
+	}
+
+	setScale( x, y ) {
+
+		this.scale.x = x;
+		this.scale.y = y !== undefined ? y : x;
+		return this;
+
+	}
+
+	setRotation( angleDegrees ) {
+
+		this.rotation = angleDegrees;
+		return this;
+
+	}
+
+	setVisible( visible ) {
+
+		this.visible = visible;
+		return this;
+
+	}
+
 }
 
-export class ImageLayer extends Layer {
-  constructor(src, options = {}) {
-    super({ ...options, type: LayerTypes.MEDIA });
-    this.src = src;
-    this.image = null;
-    this.isLoaded = false;
-  }
-
-  async load() {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        this.image = img;
-        this.isLoaded = true;
-        resolve(this);
-      };
-      img.onerror = reject;
-      img.src = this.src;
-    });
-  }
-}
-
-export class TextLayer extends Layer {
-  constructor(text, options = {}) {
-    super({ ...options, type: LayerTypes.TYPOGRAPHY });
-    this.text = text;
-    this.fontFamily = options.fontFamily || 'sans-serif';
-    this.fontSize = options.fontSize || 48;
-    this.color = options.color || '#FFFFFF';
-    this.align = options.align || 'center';
-    this.lineHeight = options.lineHeight || 1.2;
-    this.letterSpacing = options.letterSpacing || 0;
-  }
-}
+export { Layer };

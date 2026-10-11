@@ -1,7 +1,7 @@
 {
   "name": "vessertid",
   "version": "2026.1.0",
-  "description": "JavaScript Social Media Engine & Unified Creative Asset Architecture",
+  "description": "JavaScript Social Media Engine & Creative Asset Architecture",
   "type": "module",
   "main": "./build/vessertid.cjs",
   "module": "./build/vessertid.module.js",
@@ -44,7 +44,7 @@
   ],
   "directories": {
     "doc": "assets/documents",
-    "assets": "assets"
+    "example": "assets/templates"
   },
   "browserslist": [
     "> 1%, not dead, not ie 11, not op_mini all"
@@ -53,53 +53,23 @@
     "start": "node server.js -p 3000",
     "dev": "node server.js -p 3000",
     "build": "node utils/build.js",
-    "preview": "node server.js -p 3000",
-    "clean": "rm -rf build",
-    "lint": "echo 'No lint errors'"
+    "preview": "node server.js -p 3000"
   },
   "keywords": [
     "vessertid",
     "social-media",
     "social-media-engine",
     "creative-assets",
-    "content-creation",
-    "three-for-social",
     "reels",
     "tiktok",
     "youtube-shorts",
-    "typography",
-    "templates",
-    "audio-retention",
-    "javascript",
-    "html5"
+    "three-for-social",
+    "javascript"
   ],
   "author": "prssbayu-oss",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/prssbayu-oss/Vessertt/issues"
   },
-  "homepage": "https://github.com/prssbayu-oss/Vessertt",
-  "dependencies": {
-    "@google/genai": "^2.4.0",
-    "@tailwindcss/vite": "^4.3.3",
-    "@vitejs/plugin-react": "^6.1.1",
-    "lucide-react": "^0.546.0",
-    "react": "^19.0.1",
-    "react-dom": "^19.0.1",
-    "vite": "^8.3.0",
-    "express": "^4.21.2",
-    "dotenv": "^17.2.3",
-    "motion": "^12.23.24"
-  },
-  "devDependencies": {
-    "@types/node": "^22.14.0",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "autoprefixer": "^10.4.21",
-    "esbuild": "^0.25.0",
-    "tailwindcss": "^4.3.3",
-    "tsx": "^4.21.0",
-    "typescript": "^7.0.2",
-    "@types/express": "^4.17.21"
-  }
+  "homepage": "https://github.com/prssbayu-oss/Vessertt"
 }
