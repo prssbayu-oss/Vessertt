@@ -1642,6 +1642,542 @@ class Canvas2DRenderer {
 
 
 
+// [renderers/WebGLRenderer.js]
+
+export class WebGLRenderer {
+	constructor( parameters = {} ) {
+		this.domElement = parameters.canvas || document.createElement( 'canvas' );
+		this.gl = this.domElement.getContext( 'webgl' ) || this.domElement.getContext( 'experimental-webgl' );
+
+		if ( ! this.gl ) {
+			throw new Error( 'WebGLRenderer: WebGL is not supported on this device/browser.' );
+		}
+
+		this.state = new WebGLState( this.gl );
+		this.textures = new WebGLTextures( this.gl );
+		this.programs = new Map();
+
+		this.initGeometry();
+	}
+
+	initGeometry() {
+		const gl = this.gl;
+		// Fullscreen Quad
+		const vertices = new Float32Array( [
+			- 1, - 1,   0, 0,
+			  1, - 1,   1, 0,
+			- 1,   1,   0, 1,
+			- 1,   1,   0, 1,
+			  1, - 1,   1, 0,
+			  1,   1,   1, 1
+		] );
+
+		this.quadBuffer = gl.createBuffer();
+		gl.bindBuffer( gl.ARRAY_BUFFER, this.quadBuffer );
+		gl.bufferData( gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW );
+	}
+
+	setSize( width, height ) {
+		this.domElement.width = width;
+		this.domElement.height = height;
+		this.state.setViewport( 0, 0, width, height );
+	}
+
+	renderImageWithLUT( image, lutTexture, intensity = 1.0 ) {
+		const gl = this.gl;
+		if ( ! this.programs.has( 'lut' ) ) {
+			const prog = new WebGLProgram( gl, ShaderLib.lut3D.vertexShader, ShaderLib.lut3D.fragmentShader );
+			this.programs.set( 'lut', prog );
+		}
+
+		const program = this.programs.get( 'lut' );
+		program.use();
+
+		this.textures.uploadTexture( image, 0 );
+		gl.uniform1i( program.uniforms.tDiffuse, 0 );
+
+		if ( lutTexture ) {
+			this.textures.uploadTexture( lutTexture, 1 );
+			gl.uniform1i( program.uniforms.tLUT, 1 );
+		}
+
+		gl.uniform1f( program.uniforms.uIntensity, intensity );
+		gl.uniform1f( program.uniforms.uLUTSize, 33.0 );
+
+		gl.bindBuffer( gl.ARRAY_BUFFER, this.quadBuffer );
+		gl.enableVertexAttribArray( 0 );
+		gl.vertexAttribPointer( 0, 2, gl.FLOAT, false, 16, 0 );
+		gl.enableVertexAttribArray( 1 );
+		gl.vertexAttribPointer( 1, 2, gl.FLOAT, false, 16, 8 );
+
+		gl.drawArrays( gl.TRIANGLES, 0, 6 );
+	}
+}
+
+
+// [renderers/shaders/ShaderChunk/blend_modes_fragment.glsl.js]
+/* glsl */`
+precision highp float;
+varying vec2 vUv;
+uniform sampler2D tBase;
+uniform sampler2D tBlend;
+uniform int uBlendMode; // 0=Normal, 1=Multiply, 2=Screen, 3=Overlay, 4=SoftLight
+uniform float uOpacity;
+
+vec3 blendMultiply( vec3 base, vec3 blend ) { return base * blend; }
+vec3 blendScreen( vec3 base, vec3 blend ) { return 1.0 - ( 1.0 - base ) * ( 1.0 - blend ); }
+vec3 blendOverlay( vec3 base, vec3 blend ) {
+	return mix( 2.0 * base * blend, 1.0 - 2.0 * ( 1.0 - base ) * ( 1.0 - blend ), step( 0.5, base ) );
+}
+
+void main() {
+	vec4 base = texture2D( tBase, vUv );
+	vec4 blend = texture2D( tBlend, vUv );
+	vec3 res = blend.rgb;
+
+	if ( uBlendMode == 1 ) res = blendMultiply( base.rgb, blend.rgb );
+	else if ( uBlendMode == 2 ) res = blendScreen( base.rgb, blend.rgb );
+	else if ( uBlendMode == 3 ) res = blendOverlay( base.rgb, blend.rgb );
+
+	gl_FragColor = vec4( mix( base.rgb, res, uOpacity * blend.a ), base.a );
+}
+`;
+
+
+// [renderers/shaders/ShaderChunk/chroma_key_fragment.glsl.js]
+/* glsl */`
+precision highp float;
+varying vec2 vUv;
+uniform sampler2D tDiffuse;
+uniform vec3 uKeyColor;
+uniform float uSimilarity;
+uniform float uSmoothness;
+uniform float uSpill;
+
+void main() {
+	vec4 color = texture2D( tDiffuse, vUv );
+	float d = distance( color.rgb, uKeyColor );
+	float alpha = smoothstep( uSimilarity, uSimilarity + uSmoothness, d );
+
+	// Despill
+	float greenDiff = color.g - max( color.r, color.b );
+	if ( greenDiff > 0.0 ) {
+		color.g -= greenDiff * uSpill;
+	}
+
+	gl_FragColor = vec4( color.rgb, color.a * alpha );
+}
+`;
+
+
+// [renderers/shaders/ShaderChunk/color_grading_fragment.glsl.js]
+/* glsl */`
+precision highp float;
+varying vec2 vUv;
+uniform sampler2D tDiffuse;
+uniform float uExposure;
+uniform float uContrast;
+uniform float uSaturation;
+uniform float uTemperature;
+uniform float uTint;
+
+vec3 adjustColor( vec3 color ) {
+	// Exposure
+	color *= uExposure;
+
+	// Temperature & Tint
+	color.r += uTemperature * 0.1;
+	color.b -= uTemperature * 0.1;
+	color.g += uTint * 0.1;
+
+	// Contrast
+	color = ( color - 0.5 ) * uContrast + 0.5;
+
+	// Saturation
+	float luminance = dot( color, vec3( 0.2126, 0.7152, 0.0722 ) );
+	color = mix( vec3( luminance ), color, uSaturation );
+
+	return clamp( color, 0.0, 1.0 );
+}
+
+void main() {
+	vec4 texColor = texture2D( tDiffuse, vUv );
+	vec3 graded = adjustColor( texColor.rgb );
+	gl_FragColor = vec4( graded, texColor.a );
+}
+`;
+
+
+// [renderers/shaders/ShaderChunk/common_fragment.glsl.js]
+/* glsl */`
+precision highp float;
+varying vec2 vUv;
+uniform sampler2D tDiffuse;
+uniform float uOpacity;
+
+void main() {
+	vec4 texColor = texture2D( tDiffuse, vUv );
+	gl_FragColor = texColor * uOpacity;
+}
+`;
+
+
+// [renderers/shaders/ShaderChunk/common_vertex.glsl.js]
+/* glsl */`
+precision highp float;
+attribute vec2 aPosition;
+attribute vec2 aTexCoord;
+varying vec2 vUv;
+uniform mat3 uMatrix;
+
+void main() {
+	vUv = aTexCoord;
+	vec3 pos = uMatrix * vec3( aPosition, 1.0 );
+	gl_Position = vec4( pos.xy, 0.0, 1.0 );
+}
+`;
+
+
+// [renderers/shaders/ShaderChunk/film_grain_fragment.glsl.js]
+/* glsl */`
+precision highp float;
+varying vec2 vUv;
+uniform sampler2D tDiffuse;
+uniform float uTime;
+uniform float uGrainAmount;
+
+float pseudoRandom( vec2 co ) {
+	return fract( sin( dot( co.xy, vec2( 12.9898, 78.233 ) ) ) * 43758.5453 );
+}
+
+void main() {
+	vec4 color = texture2D( tDiffuse, vUv );
+	float noise = pseudoRandom( vUv + fract( uTime ) ) * 2.0 - 1.0;
+	color.rgb += noise * uGrainAmount;
+	gl_FragColor = color;
+}
+`;
+
+
+// [renderers/shaders/ShaderChunk/ken_burns_vertex.glsl.js]
+/* glsl */`
+precision highp float;
+attribute vec2 aPosition;
+attribute vec2 aTexCoord;
+varying vec2 vUv;
+uniform vec2 uPan;
+uniform float uZoom;
+
+void main() {
+	vec2 centered = aTexCoord - 0.5;
+	vUv = ( centered / uZoom ) + 0.5 + uPan;
+	gl_Position = vec4( aPosition, 0.0, 1.0 );
+}
+`;
+
+
+// [renderers/shaders/ShaderChunk/lut_3d_fragment.glsl.js]
+/* glsl */`
+precision highp float;
+varying vec2 vUv;
+uniform sampler2D tDiffuse;
+uniform sampler2D tLUT;
+uniform float uLUTSize;
+uniform float uIntensity;
+
+vec3 sampleLUT( vec3 color ) {
+	float red = color.r * ( uLUTSize - 1.0 );
+	float green = color.g * ( uLUTSize - 1.0 );
+	float blue = color.b * ( uLUTSize - 1.0 );
+
+	float slice = floor( blue );
+	float sliceNext = min( slice + 1.0, uLUTSize - 1.0 );
+	float sliceFrac = fract( blue );
+
+	float u = ( red + 0.5 ) / ( uLUTSize * uLUTSize );
+	float v = ( green + 0.5 ) / uLUTSize;
+
+	vec2 uv1 = vec2( slice / uLUTSize + u, v );
+	vec2 uv2 = vec2( sliceNext / uLUTSize + u, v );
+
+	vec3 col1 = texture2D( tLUT, uv1 ).rgb;
+	vec3 col2 = texture2D( tLUT, uv2 ).rgb;
+
+	return mix( col1, col2, sliceFrac );
+}
+
+void main() {
+	vec4 base = texture2D( tDiffuse, vUv );
+	vec3 graded = sampleLUT( base.rgb );
+	gl_FragColor = vec4( mix( base.rgb, graded, uIntensity ), base.a );
+}
+`;
+
+
+// [renderers/shaders/ShaderChunk/transition_fade_fragment.glsl.js]
+/* glsl */`
+precision highp float;
+varying vec2 vUv;
+uniform sampler2D tFrom;
+uniform sampler2D tTo;
+uniform float uProgress;
+
+void main() {
+	vec4 cFrom = texture2D( tFrom, vUv );
+	vec4 cTo = texture2D( tTo, vUv );
+	gl_FragColor = mix( cFrom, cTo, uProgress );
+}
+`;
+
+
+// [renderers/shaders/ShaderChunk/transition_glitch_fragment.glsl.js]
+/* glsl */`
+precision highp float;
+varying vec2 vUv;
+uniform sampler2D tFrom;
+uniform sampler2D tTo;
+uniform float uProgress;
+
+float random( vec2 co ) {
+	return fract( sin( dot( co.xy, vec2( 12.9898, 78.233 ) ) ) * 43758.5453 );
+}
+
+void main() {
+	float block = random( floor( vUv * 20.0 ) + uProgress );
+	vec2 offset = vec2( ( block - 0.5 ) * 0.1 * sin( uProgress * 3.1415 ), 0.0 );
+
+	vec4 colFrom = texture2D( tFrom, vUv + offset );
+	vec4 colTo = texture2D( tTo, vUv - offset );
+
+	// Chromatic displacement
+	float r = mix( colFrom.r, colTo.r, uProgress );
+	float g = mix( texture2D( tFrom, vUv + offset * 1.5 ).g, texture2D( tTo, vUv - offset * 1.5 ).g, uProgress );
+	float b = mix( colFrom.b, colTo.b, uProgress );
+
+	gl_FragColor = vec4( r, g, b, 1.0 );
+}
+`;
+
+
+// [renderers/shaders/ShaderChunk/transition_zoom_fragment.glsl.js]
+/* glsl */`
+precision highp float;
+varying vec2 vUv;
+uniform sampler2D tFrom;
+uniform sampler2D tTo;
+uniform float uProgress;
+
+void main() {
+	vec2 center = vec2( 0.5, 0.5 );
+	vec2 uvFrom = ( vUv - center ) * ( 1.0 + uProgress * 2.0 ) + center;
+	vec2 uvTo = ( vUv - center ) * ( 1.0 - ( 1.0 - uProgress ) * 2.0 ) + center;
+
+	vec4 cFrom = texture2D( tFrom, clamp( uvFrom, 0.0, 1.0 ) );
+	vec4 cTo = texture2D( tTo, clamp( uvTo, 0.0, 1.0 ) );
+
+	gl_FragColor = mix( cFrom, cTo, uProgress );
+}
+`;
+
+
+// [renderers/shaders/ShaderChunk/vignette_fragment.glsl.js]
+/* glsl */`
+precision highp float;
+varying vec2 vUv;
+uniform sampler2D tDiffuse;
+uniform float uRadius;
+uniform float uSoftness;
+
+void main() {
+	vec4 color = texture2D( tDiffuse, vUv );
+	float dist = distance( vUv, vec2( 0.5, 0.5 ) );
+	float vignette = smoothstep( uRadius, uRadius - uSoftness, dist );
+	color.rgb *= vignette;
+	gl_FragColor = color;
+}
+`;
+
+
+// [renderers/shaders/ShaderChunk.js]
+
+const ShaderChunk = {
+	common_vertex,
+	common_fragment,
+	color_grading_fragment,
+	chroma_key_fragment,
+	lut_3d_fragment,
+	blend_modes_fragment,
+	film_grain_fragment,
+	vignette_fragment,
+	transition_glitch_fragment,
+	transition_zoom_fragment,
+	transition_fade_fragment,
+	ken_burns_vertex
+};
+
+
+// [renderers/shaders/ShaderLib.js]
+
+const ShaderLib = {
+	basic: {
+		uniforms: UniformsLib.common,
+		vertexShader: ShaderChunk.common_vertex,
+		fragmentShader: ShaderChunk.common_fragment
+	},
+	colorGrading: {
+		uniforms: { ...UniformsLib.common, ...UniformsLib.grading },
+		vertexShader: ShaderChunk.common_vertex,
+		fragmentShader: ShaderChunk.color_grading_fragment
+	},
+	chromaKey: {
+		uniforms: { ...UniformsLib.common, ...UniformsLib.chroma },
+		vertexShader: ShaderChunk.common_vertex,
+		fragmentShader: ShaderChunk.chroma_key_fragment
+	},
+	lut3D: {
+		uniforms: { ...UniformsLib.common, ...UniformsLib.lut },
+		vertexShader: ShaderChunk.common_vertex,
+		fragmentShader: ShaderChunk.lut_3d_fragment
+	}
+};
+
+
+// [renderers/shaders/UniformsLib.js]
+const UniformsLib = {
+	common: {
+		tDiffuse: { value: null },
+		uOpacity: { value: 1.0 },
+		uMatrix: { value: [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ] }
+	},
+	grading: {
+		uExposure: { value: 1.0 },
+		uContrast: { value: 1.0 },
+		uSaturation: { value: 1.0 },
+		uTemperature: { value: 0.0 },
+		uTint: { value: 0.0 }
+	},
+	chroma: {
+		uKeyColor: { value: [ 0.0, 1.0, 0.0 ] },
+		uSimilarity: { value: 0.4 },
+		uSmoothness: { value: 0.1 },
+		uSpill: { value: 0.1 }
+	},
+	lut: {
+		tLUT: { value: null },
+		uLUTSize: { value: 33.0 },
+		uIntensity: { value: 1.0 }
+	}
+};
+
+
+// [renderers/webgl/WebGLProgram.js]
+
+export class WebGLProgram {
+	constructor( gl, vertexShaderSource, fragmentShaderSource ) {
+		this.gl = gl;
+		this.program = gl.createProgram();
+
+		const vs = createWebGLShader( gl, gl.VERTEX_SHADER, vertexShaderSource );
+		const fs = createWebGLShader( gl, gl.FRAGMENT_SHADER, fragmentShaderSource );
+
+		gl.attachShader( this.program, vs );
+		gl.attachShader( this.program, fs );
+		gl.linkProgram( this.program );
+
+		if ( ! gl.getProgramParameter( this.program, gl.LINK_STATUS ) ) {
+			const info = gl.getProgramInfoLog( this.program );
+			throw new Error( `WebGLProgram: Link error:\n${info}` );
+		}
+
+		this.uniforms = {};
+		this.attributes = {};
+
+		const numUniforms = gl.getProgramParameter( this.program, gl.ACTIVE_UNIFORMS );
+		for ( let i = 0; i < numUniforms; i ++ ) {
+			const info = gl.getActiveUniform( this.program, i );
+			this.uniforms[ info.name ] = gl.getUniformLocation( this.program, info.name );
+		}
+	}
+
+	use() {
+		this.gl.useProgram( this.program );
+	}
+}
+
+
+// [renderers/webgl/WebGLShader.js]
+export function createWebGLShader( gl, type, source ) {
+	const shader = gl.createShader( type );
+	gl.shaderSource( shader, source );
+	gl.compileShader( shader );
+
+	if ( ! gl.getShaderParameter( shader, gl.COMPILE_STATUS ) ) {
+		const info = gl.getShaderInfoLog( shader );
+		gl.deleteShader( shader );
+		throw new Error( `WebGLShader: Compilation error:\n${info}` );
+	}
+
+	return shader;
+}
+
+
+// [renderers/webgl/WebGLState.js]
+export class WebGLState {
+	constructor( gl ) {
+		this.gl = gl;
+		this.currentProgram = null;
+		this.viewport = { x: 0, y: 0, width: 0, height: 0 };
+	}
+
+	setViewport( x, y, width, height ) {
+		if ( this.viewport.width !== width || this.viewport.height !== height ) {
+			this.gl.viewport( x, y, width, height );
+			this.viewport = { x, y, width, height };
+		}
+	}
+
+	enableBlend( enable = true ) {
+		if ( enable ) {
+			this.gl.enable( this.gl.BLEND );
+			this.gl.blendFunc( this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA );
+		} else {
+			this.gl.disable( this.gl.BLEND );
+		}
+	}
+}
+
+
+// [renderers/webgl/WebGLTextures.js]
+export class WebGLTextures {
+	constructor( gl ) {
+		this.gl = gl;
+		this.textures = new Map();
+	}
+
+	uploadTexture( image, unit = 0 ) {
+		const gl = this.gl;
+		let tex = this.textures.get( image );
+
+		if ( ! tex ) {
+			tex = gl.createTexture();
+			gl.activeTexture( gl.TEXTURE0 + unit );
+			gl.bindTexture( gl.TEXTURE_2D, tex );
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR );
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR );
+			gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image );
+			this.textures.set( image, tex );
+		} else {
+			gl.activeTexture( gl.TEXTURE0 + unit );
+			gl.bindTexture( gl.TEXTURE_2D, tex );
+		}
+
+		return tex;
+	}
+}
+
+
 // [typography/Font.js]
 class Font {
 	constructor( name, url ) {
